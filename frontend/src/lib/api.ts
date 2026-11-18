@@ -98,13 +98,19 @@ export async function apiRequest<T>(
         res.status
       );
     }
-    const detail =
+    if (res.status >= 502 && res.status <= 504) {
+      throw new ApiError(
+        `Backend server is restarting or temporarily unreachable (HTTP ${res.status}). Please retry in a few seconds.`,
+        res.status
+      );
+    }
+    const rawDetail =
       (data && typeof data === 'object' && (data.detail || data.message)) ||
-      (typeof data === 'string' && data) ||
-      `Request failed (${res.status})`;
-    const msg = Array.isArray(detail)
-      ? detail.map((d: any) => d.msg || JSON.stringify(d)).join('; ')
-      : String(detail);
+      (typeof data === 'string' && !data.trim().startsWith('<') ? data : null) ||
+      `Request failed (HTTP ${res.status})`;
+    const msg = Array.isArray(rawDetail)
+      ? rawDetail.map((d: any) => d.msg || JSON.stringify(d)).join('; ')
+      : String(rawDetail);
     throw new ApiError(msg, res.status);
   }
 
