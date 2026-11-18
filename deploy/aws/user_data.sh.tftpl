@@ -8,13 +8,12 @@ apt-get install -y docker.io docker-compose-v2 awscli git curl
 systemctl enable docker
 systemctl start docker
 
-mkdir -p /opt/apexpulse/models /opt/apexpulse/dataset /opt/apexpulse/uploads
-
-# Sync existing trained model & dataset from S3 when uploaded
-aws s3 sync "s3://${s3_bucket}/trained_models/" /opt/apexpulse/models/ --region "${aws_region}" || true
-aws s3 cp "s3://${s3_bucket}/dataset/preprocessed_workout_dataset.csv" /opt/apexpulse/dataset/preprocessed_workout_dataset.csv --region "${aws_region}" || true
+mkdir -p /opt/apexpulse/models /opt/apexpulse/dataset /opt/apexpulse/uploads /opt/apexpulse/app
 
 cat <<EOF > /opt/apexpulse/.env
+AWS_REGION=${aws_region}
+CLOUDWATCH_LOG_GROUP=${cloudwatch_log_group}
+S3_ARTIFACTS_BUCKET=${s3_bucket}
 DATABASE_URL=postgresql+psycopg://${db_username}:${db_password}@${db_host}:${db_port}/${db_name}
 MODEL_DIR=/models
 DATASET_PATH=/dataset/preprocessed_workout_dataset.csv
@@ -26,4 +25,9 @@ CORS_ORIGINS=*
 EOF
 
 chmod 600 /opt/apexpulse/.env
-echo "ApexPulse AWS host bootstrap complete. Upload application repository and run docker compose up -d."
+
+# Sync trained model & dataset from S3 if already uploaded
+aws s3 sync "s3://${s3_bucket}/trained_models/" /opt/apexpulse/models/ --region "${aws_region}" || true
+aws s3 cp "s3://${s3_bucket}/dataset/preprocessed_workout_dataset.csv" /opt/apexpulse/dataset/preprocessed_workout_dataset.csv --region "${aws_region}" || true
+
+echo "ApexPulse AWS host bootstrap complete."

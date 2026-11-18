@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: apexpulse-backend
+    restart: unless-stopped
+    env_file:
+      - /opt/apexpulse/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - /opt/apexpulse/models:/models:ro
+      - /opt/apexpulse/dataset/preprocessed_workout_dataset.csv:/dataset/preprocessed_workout_dataset.csv:ro
+      - /opt/apexpulse/uploads:/app/uploads
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ${AWS_REGION:-us-east-1}
+        awslogs-group: ${CLOUDWATCH_LOG_GROUP:-/apexpulse/staging/application}
+        awslogs-stream: backend
+        awslogs-create-group: "true"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: apexpulse-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ${AWS_REGION:-us-east-1}
+        awslogs-group: ${CLOUDWATCH_LOG_GROUP:-/apexpulse/staging/application}
+        awslogs-stream: frontend
+        awslogs-create-group: "true"

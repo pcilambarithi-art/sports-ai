@@ -347,15 +347,16 @@ resource "aws_instance" "app" {
   }
 
   user_data = templatefile("${path.module}/user_data.sh.tftpl", {
-    s3_bucket      = aws_s3_bucket.artifacts.bucket
-    aws_region     = var.aws_region
-    db_host        = aws_db_instance.postgres.address
-    db_port        = aws_db_instance.postgres.port
-    db_name        = var.db_name
-    db_username    = var.db_username
-    db_password    = var.db_password
-    secret_key     = var.app_secret_key
-    sensor_api_key = var.sensor_api_key
+    s3_bucket            = aws_s3_bucket.artifacts.bucket
+    aws_region           = var.aws_region
+    cloudwatch_log_group = aws_cloudwatch_log_group.app.name
+    db_host              = aws_db_instance.postgres.address
+    db_port              = aws_db_instance.postgres.port
+    db_name              = var.db_name
+    db_username          = var.db_username
+    db_password          = var.db_password
+    secret_key           = var.app_secret_key
+    sensor_api_key       = var.sensor_api_key
   })
 
   tags = {
