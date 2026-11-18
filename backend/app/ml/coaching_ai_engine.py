@@ -112,6 +112,12 @@ class CoachingAIEngine:
                     self.strain_model = joblib.load(STRAIN_MODEL_PATH)
                     self.nlp_bundle = joblib.load(NLP_MODEL_PATH)
                     self.metrics = json.loads(METRICS_JSON_PATH.read_text(encoding="utf-8"))
+                    # Auto-retrain if DB has more knowledge documents than cached NLP bundle
+                    db_kb_count = db.query(CoachingKnowledge).count()
+                    cached_kb_count = len((self.nlp_bundle or {}).get("docs", []))
+                    if db_kb_count > cached_kb_count:
+                        logger.info("DB knowledge grew (%d -> %d); retraining Companion AI...", cached_kb_count, db_kb_count)
+                        return self.train_all(db)
                     self.ready = True
                     logger.info("Loaded trained companion Coaching AI models from %s", COACHING_AI_DIR)
                     return self.metrics

@@ -1,7 +1,7 @@
 {
   "ready": true,
-  "trained_at": "2026-11-18T07:30:28Z",
-  "training_seconds": 8.05,
+  "trained_at": "2026-11-18T07:33:43Z",
+  "training_seconds": 6.51,
   "strain_classifier": {
     "algorithm": "HistGradientBoostingClassifier (Continuous Learning)",
     "classes": [
@@ -11,19 +11,26 @@
       "Overreaching Caution"
     ],
     "dataset_rows_used": 70000,
-    "db_records_used": 4,
-    "total_training_samples": 70004,
-    "test_accuracy_pct": 96.89,
-    "test_macro_f1_pct": 97.01
+    "db_records_used": 0,
+    "total_training_samples": 70000,
+    "test_accuracy_pct": 97.0,
+    "test_macro_f1_pct": 97.14
   },
   "semantic_coach_nlp": {
     "algorithm": "TF-IDF Bi-Gram Semantic Retriever + LinearSVC Intent Classifier",
-    "knowledge_documents": 1,
+    "knowledge_documents": 30,
     "categories": [
-      "strategy"
+      "ai_model",
+      "endurance",
+      "injury_prevention",
+      "mental_performance",
+      "recovery",
+      "strategy",
+      "strength",
+      "video_biomechanics"
     ],
-    "vocabulary_size": 45,
-    "intent_cv_accuracy_pct": null,
+    "vocabulary_size": 2081,
+    "intent_cv_accuracy_pct": 50.0,
     "external_llm_configured": false
   }
 }

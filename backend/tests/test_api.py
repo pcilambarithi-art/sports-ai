@@ -44,6 +44,14 @@ def client(tmp_path_factory):
     test_upload_dir = tmp_dir / "uploads"
     settings.UPLOAD_DIR = str(test_upload_dir)
 
+    # Isolate companion AI model artifacts inside pytest tmp_dir so production models are never overwritten
+    import app.ml.coaching_ai_engine as cae
+    orig_paths = (cae.COACHING_AI_DIR, cae.STRAIN_MODEL_PATH, cae.NLP_MODEL_PATH, cae.METRICS_JSON_PATH)
+    cae.COACHING_AI_DIR = tmp_dir / "trained_coaching_ai"
+    cae.STRAIN_MODEL_PATH = cae.COACHING_AI_DIR / "strain_readiness_classifier.pkl"
+    cae.NLP_MODEL_PATH = cae.COACHING_AI_DIR / "coaching_nlp_assistant.pkl"
+    cae.METRICS_JSON_PATH = cae.COACHING_AI_DIR / "coaching_ai_metrics.json"
+
     test_engine = create_engine(
         f"sqlite:///{test_db_path}",
         connect_args={"check_same_thread": False},
@@ -75,6 +83,7 @@ def client(tmp_path_factory):
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+    cae.COACHING_AI_DIR, cae.STRAIN_MODEL_PATH, cae.NLP_MODEL_PATH, cae.METRICS_JSON_PATH = orig_paths
     test_engine.dispose()
 
 
