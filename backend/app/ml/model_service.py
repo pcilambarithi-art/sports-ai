@@ -240,9 +240,13 @@ class CalorieModelService:
             if not prep_path.exists():
                 raise FileNotFoundError(f"Preprocessor file not found: {prep_path}")
 
-            logger.info("Loading existing trained model from %s ...", model_path)
+            logger.info("Loading existing trained model from %s (mmap_mode='r') ...", model_path)
             preprocessor = joblib.load(prep_path)
-            model = joblib.load(model_path)
+            try:
+                model = joblib.load(model_path, mmap_mode="r")
+            except Exception as mmap_exc:
+                logger.warning("mmap_mode='r' unavailable (%s); falling back to standard load...", mmap_exc)
+                model = joblib.load(model_path)
 
             # Extract real feature importances from ExtraTreesRegressor
             importances_list: List[Dict[str, Any]] = []
