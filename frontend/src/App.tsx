@@ -1,10 +1,11 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ModelStatusProvider } from './context/ModelStatusContext';
 import { Layout } from './components/Layout';
 import { AuthPage } from './pages/AuthPage';
+import { isGitHubPagesHost } from './lib/api';
 
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then((m) => ({ default: m.DashboardPage })));
 const AiPredictionLabPage = lazy(() =>
@@ -82,13 +83,14 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const Router = isGitHubPagesHost() ? HashRouter : BrowserRouter;
   return (
     <ThemeProvider>
       <AuthProvider>
         <ModelStatusProvider>
-          <BrowserRouter>
+          <Router>
             <AppRoutes />
-          </BrowserRouter>
+          </Router>
         </ModelStatusProvider>
       </AuthProvider>
     </ThemeProvider>

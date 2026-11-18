@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "uploads"
     MAX_VIDEO_SIZE_MB: int = 150
 
-    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
+    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,https://pcilambarithi-art.github.io"
 
     @property
     def cors_origin_list(self) -> List[str]:

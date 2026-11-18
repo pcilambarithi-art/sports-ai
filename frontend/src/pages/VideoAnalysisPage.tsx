@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { apiRequest } from '../lib/api';
+import { apiRequest, resolveApiUrl } from '../lib/api';
 import { useModelStatus } from '../context/ModelStatusContext';
 import { EXERCISE_TYPES } from '../types';
 import { EmptyState } from '../components/EmptyState';
@@ -301,7 +301,7 @@ export function VideoAnalysisPage() {
                         className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-950"
                       >
                         <img
-                          src={km.image_url}
+                          src={resolveApiUrl(km.image_url)}
                           alt={`Keyframe at ${km.timestamp_sec}s`}
                           className="w-full h-36 object-cover"
                         />

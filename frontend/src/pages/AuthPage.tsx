@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Activity, Brain, ShieldCheck, Video } from 'lucide-react';
+import { Activity, Brain, Server, ShieldCheck, Video } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { getApiBaseUrl, isGitHubPagesHost, setApiBaseUrl } from '../lib/api';
 import type { UserRole } from '../types';
 
 export function AuthPage() {
@@ -13,6 +14,23 @@ export function AuthPage() {
   const [sport, setSport] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showBackendConfig, setShowBackendConfig] = useState(isGitHubPagesHost());
+  const [backendUrl, setBackendUrl] = useState(getApiBaseUrl());
+  const [backendStatus, setBackendStatus] = useState<string | null>(null);
+
+  const handleSaveBackend = async () => {
+    setApiBaseUrl(backendUrl);
+    setBackendStatus('Testing connection...');
+    try {
+      const target = backendUrl.trim().replace(/\/+$/, '') + '/health';
+      const r = await fetch(target);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const h = await r.json();
+      setBackendStatus(`Connected! Backend: ${h.status} | ML Model: ${h.ml_model_status}`);
+    } catch (e: any) {
+      setBackendStatus(`Could not reach backend (${e.message}). Verify URL & HTTPS.`);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -246,6 +264,45 @@ export function AuthPage() {
                 : 'Create Account'}
             </button>
           </form>
+
+          {/* Backend Server Connection Panel (Essential when hosted on GitHub Pages / Netlify) */}
+          <div className="mt-5 pt-4 border-t border-purple-200/60 dark:border-purple-500/25">
+            <button
+              type="button"
+              onClick={() => setShowBackendConfig((s) => !s)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-cyan-300 hover:underline cursor-pointer"
+            >
+              <Server className="w-3.5 h-3.5" />
+              {showBackendConfig ? 'Hide Backend Server URL' : 'Configure Remote Backend Server URL'}
+            </button>
+            {showBackendConfig && (
+              <div className="mt-3 space-y-2 p-3 rounded-xl bg-purple-50/70 dark:bg-[#100621]/80 border border-purple-300/40 dark:border-purple-500/30">
+                <p className="text-[11px] text-slate-500 dark:text-purple-200/70">
+                  GitHub Pages serves the static frontend. Paste your live FastAPI backend URL (e.g., Cloudflare Tunnel, Railway, or VPS HTTPS URL):
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    className="input-field py-1.5 text-xs"
+                    placeholder="https://your-tunnel.trycloudflare.com"
+                    value={backendUrl}
+                    onChange={(e) => setBackendUrl(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveBackend}
+                    className="btn-secondary py-1.5 px-3 text-xs shrink-0"
+                  >
+                    Connect
+                  </button>
+                </div>
+                {backendStatus && (
+                  <div className="text-[11px] font-mono text-cyan-500 dark:text-cyan-300">
+                    {backendStatus}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
