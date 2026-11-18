@@ -23,13 +23,24 @@ MODEL_BIN_PATH = Path(r"D:\V3\trained_models\calorie_prediction_model.pkl")
 
 def main() -> None:
     token = (os.getenv("HF_TOKEN") or "").strip()
-    if not token or token == "hf_YOUR_WRITE_TOKEN" or not token.startswith("hf_"):
-        print("\n[!] Please set your REAL Hugging Face Write token first:")
-        print("    1. Sign in at https://huggingface.co/settings/tokens")
-        print("    2. Click '+ Create new token' -> select 'Write' -> copy the token (starts with hf_...)")
-        print('    3. Run: $env:HF_TOKEN = "hf_paste_your_real_token_here"')
-        print(r"    4. Re-run: .\.venv\Scripts\python.exe ..\deploy\huggingface\deploy-hf-space.py")
+    is_placeholder = (
+        not token
+        or "PASTE" in token.upper()
+        or "YOUR_" in token.upper()
+        or not token.startswith("hf_")
+        or len(token) < 20
+    )
+    if is_placeholder:
+        print("\n=== Hugging Face Authentication ===")
+        print("1. Open https://huggingface.co/settings/tokens in your browser.")
+        print("2. Click '+ Create new token' -> select 'Write' -> click 'Create token' -> Copy it.")
+        print("   (A real token looks like: hf_aBcDeFgHiJkLmNoPqRsTuVwXyZ12345678)\n")
+        token = input("Paste your REAL Hugging Face Write token here and press Enter: ").strip()
+
+    if not token.startswith("hf_") or "PASTE" in token.upper() or "YOUR_" in token.upper() or len(token) < 20:
+        print("\n[!] That does not look like a real Hugging Face token. Please copy the actual token from https://huggingface.co/settings/tokens.")
         raise SystemExit(1)
+
     api = HfApi(token=token)
     me = api.whoami()
     username = me["name"]

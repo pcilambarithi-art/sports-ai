@@ -147,8 +147,8 @@ def build_pdf():
 
     # Executive Summary Table
     summary_data = [
-        [Paragraph("<b>GitHub &amp; Live Web</b>", cell_bold), Paragraph("Repo: https://github.com/pcilambarithi-art/sports-ai (Branch: main, 150+ tracked files incl. ml_source_v3/ backup)<br/>GitHub Pages Live UI: https://pcilambarithi-art.github.io/sports-ai/", cell_style)],
-        [Paragraph("<b>Primary Trained Model</b>", cell_bold), Paragraph("Existing D:\\V3 ExtraTreesRegressor (300 trees, 2.93 GB, preserved 100% read-only) — Verified Test R²: 91.81%, MAE: 61.36 kcal, 5-Fold CV R²: 91.71%", cell_style)],
+        [Paragraph("<b>GitHub &amp; Cloud Backup</b>", cell_bold), Paragraph("GitHub Repo: https://github.com/pcilambarithi-art/sports-ai (Code, 70k Datasets, PDF)<br/>Hugging Face Model Backup (2.93 GB): https://huggingface.co/ilambarithi/apexpulse-calorie-model<br/>GitHub Pages Live UI: https://pcilambarithi-art.github.io/sports-ai/", cell_style)],
+        [Paragraph("<b>Primary Trained Model</b>", cell_bold), Paragraph("Existing D:\\V3 ExtraTreesRegressor (300 trees, 2.93 GB, preserved 100% read-only & backed up on HF Hub) — Verified Test R²: 91.81%, MAE: 61.36 kcal, 5-Fold CV R²: 91.71%", cell_style)],
         [Paragraph("<b>Companion Trained AI</b>", cell_bold), Paragraph("HistGradientBoosting Strain & Readiness Classifier (97.00% Test Accuracy, 97.14% Macro-F1 on 70,000+ rows) + TF-IDF Bi-Gram & LinearSVC Semantic Virtual Coach (30 curated knowledge docs, 2,081 bi-gram vocab)", cell_style)],
         [Paragraph("<b>Application Scale</b>", cell_bold), Paragraph("49 REST & WebSocket API Endpoints • 22 Relational Database Tables (Alembic-migrated) • 12 Glossy Purple-Black Neon React Modules • OpenCV Computer Vision Video Pipeline", cell_style)],
         [Paragraph("<b>Verification Status</b>", cell_bold), Paragraph("Pytest Full Integration Suite PASSED • Live 2.93 GB Model HTTP Inference Test PASSED • Frontend Production Build PASSED (0 TS errors, 0 warnings) • GitHub Pages & Live Public HTTPS Verified (HTTP 200)", cell_style)],
@@ -369,40 +369,40 @@ def build_pdf():
     story.append(Spacer(1, 10))
 
     # Deployment Options Summary
-    story.append(Paragraph("Deployment, GitHub Backup &amp; Always-On Access Architecture", h1_style))
+    story.append(Paragraph("Deployment, Complete Cloud Backup &amp; Hosting Architecture", h1_style))
     story.append(
         Paragraph(
+            "• <b>100% Complete Cloud Backup:</b> All application code, documentation PDF, deployment configs, and original "
+            "D:\\V3 scripts/metadata/70,000-row datasets (ml_source_v3/) are backed up on GitHub "
+            "(https://github.com/pcilambarithi-art/sports-ai), and the full 2.93 GB trained ExtraTreesRegressor binary "
+            "(calorie_prediction_model.pkl) is backed up on Hugging Face Model Hub "
+            "(https://huggingface.co/ilambarithi/apexpulse-calorie-model).<br/>"
             "• <b>Live GitHub Pages Frontend + Remote Backend Connector:</b> Published built React app at "
             "https://pcilambarithi-art.github.io/sports-ai/ (.nojekyll + /sports-ai/ Vite base + HashRouter + "
             ".github/workflows/deploy-pages.yml) with an in-app Backend Server URL connector and CORS enabled.<br/>"
-            "• <b>Zero-AWS Always-On Free 16 GB RAM Backend (Hugging Face Spaces):</b> Ready-to-run Docker Space "
-            "deployment in deploy/huggingface/ (Dockerfile, README_HF_SPACE.md, and automated deploy-hf-space.py) "
-            "designed to host the 2.93 GB ExtraTrees model and FastAPI backend on a permanent HTTPS URL that auto-wakes "
-            "whenever someone opens GitHub Pages (requires your personal HF_TOKEN to authenticate).<br/>"
-            "• <b>Zero-AWS Local &amp; Instant Free Public HTTPS:</b> Double-click START_APEXPULSE.bat (or run "
-            "start-local.ps1 + start-public-tunnel.ps1 using Cloudflare Tunnel) to run locally or share globally over HTTPS.<br/>"
-            "• <b>Full GitHub Source &amp; Dataset Backup:</b> All application code, documentation PDF, deployment configs, "
-            "and original D:\\V3 scripts/metadata/70,000-row datasets (ml_source_v3/) are backed up on GitHub "
-            "(the 2.93 GB .pkl binary is excluded due to GitHub's 100 MB file cap and reproducible via ml_source_v3/train.py).<br/>"
-            "• <b>Additional Cloud Options Included:</b> docker-compose.yml (PostgreSQL 16 + FastAPI + Nginx), "
-            "railway.toml (Railway Docker), netlify.toml (Netlify Frontend), and deploy/aws/main.tf (AWS Terraform IaC).",
+            "• <b>Free Local &amp; Instant Public HTTPS (Zero Monthly Fees):</b> Double-click START_APEXPULSE.bat "
+            "(or run start-local.ps1 + start-public-tunnel.ps1 using Cloudflare Tunnel) to run locally or share globally over HTTPS.<br/>"
+            "• <b>24/7 Cloud Backend Options (8–16 GB RAM for 2.93 GB Model):</b> Hugging Face Docker Space "
+            "(deploy/huggingface/, requires HF PRO subscription for Docker Spaces), Railway (railway.toml), "
+            "Self-Hosted VPS (docker-compose.yml), Netlify Frontend (netlify.toml), or AWS Terraform IaC (deploy/aws/main.tf) "
+            "— all able to download the model directly from your Hugging Face Model Hub URL.",
             body_style,
         )
     )
     story.append(Spacer(1, 8))
 
-    # Step-by-Step Always-On Free Deployment Guide
-    story.append(Paragraph("Step-by-Step Guide: Free Always-On Hugging Face (16 GB RAM) + GitHub Pages", h1_style))
+    # Cloud Backend Deployment Checklist (No Secrets Stored)
+    story.append(Paragraph("Quick Deployment Reference: Connecting a 24/7 Cloud Backend", h1_style))
     hf_steps_tbl = Table(
         [
             [Paragraph("<b>Step</b>", cell_bold), Paragraph("<b>Action</b>", cell_bold)],
-            [Paragraph("Step 1", cell_bold), Paragraph("Sign up or sign in for free at https://huggingface.co/join.", cell_style)],
-            [Paragraph("Step 2", cell_bold), Paragraph("Open https://huggingface.co/settings/tokens → click '+ Create new token' → choose Token type: Write → name it 'sports-ai' → click 'Create token' and copy the real token starting with hf_... (keep private).", cell_style)],
-            [Paragraph("Step 3", cell_bold), Paragraph("In PowerShell run:<br/>cd D:\\sports-coaching-system\\backend<br/>$env:HF_TOKEN = \"hf_PASTE_YOUR_REAL_TOKEN\"<br/>.&bsol;.venv\\Scripts\\python.exe ..\\deploy\\huggingface\\deploy-hf-space.py".replace("&bsol;", "\\"), cell_style)],
-            [Paragraph("Step 4", cell_bold), Paragraph("Wait ~3–5 minutes for the Docker Space (https://huggingface.co/spaces/&lt;username&gt;/sports-ai-api) to show green 'Running' status with your 2.93 GB ExtraTrees model and Companion AI loaded.", cell_style)],
-            [Paragraph("Step 5", cell_bold), Paragraph("Copy your permanent Space URL (https://&lt;username&gt;-sports-ai-api.hf.space) into GitHub Repo Settings → Secrets and variables → Actions → Variables → VITE_API_BASE_URL, and set Settings → Pages → Source to GitHub Actions (or paste it into the in-app Backend Server URL box on https://pcilambarithi-art.github.io/sports-ai/).", cell_style)],
+            [Paragraph("Step 1", cell_bold), Paragraph("Verified Model Download URL (already uploaded &amp; ready): https://huggingface.co/ilambarithi/apexpulse-calorie-model/resolve/main/calorie_prediction_model.pkl", cell_style)],
+            [Paragraph("Step 2", cell_bold), Paragraph("Choose a 24/7 backend host with 8–16 GB RAM: Hugging Face PRO Docker Space (deploy/huggingface/deploy-hf-space.py using your personal Write token via interactive prompt), Railway (railway.toml), or a Linux VPS (docker-compose.yml).", cell_style)],
+            [Paragraph("Step 3", cell_bold), Paragraph("Set MODEL_DOWNLOAD_URL to the Hugging Face model URL above and CORS_ORIGINS=https://pcilambarithi-art.github.io on your backend host.", cell_style)],
+            [Paragraph("Step 4", cell_bold), Paragraph("Add your permanent backend HTTPS URL to GitHub Repo Settings → Secrets and variables → Actions → Variables → VITE_API_BASE_URL (or paste it into the in-app Backend Server URL box on https://pcilambarithi-art.github.io/sports-ai/).", cell_style)],
+            [Paragraph("Local Mode", cell_bold), Paragraph("For free zero-cloud operation anytime on your PC, double-click D:\\sports-coaching-system\\START_APEXPULSE.bat and open http://localhost:5173 or the generated Cloudflare HTTPS URL.", cell_style)],
         ],
-        colWidths=[22 * mm, 152 * mm],
+        colWidths=[24 * mm, 150 * mm],
     )
     hf_steps_tbl.setStyle(
         TableStyle(
