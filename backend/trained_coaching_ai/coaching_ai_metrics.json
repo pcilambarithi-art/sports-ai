@@ -1,7 +1,7 @@
 {
   "ready": true,
-  "trained_at": "2026-11-18T07:33:43Z",
-  "training_seconds": 6.51,
+  "trained_at": "2026-11-18T08:03:24Z",
+  "training_seconds": 19.71,
   "strain_classifier": {
     "algorithm": "HistGradientBoostingClassifier (Continuous Learning)",
     "classes": [
