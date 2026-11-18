@@ -1103,7 +1103,27 @@ def generate_assistant_reply(
                 "Start by running an AI Calorie Prediction or logging a training session!"
             )
 
-    # 5. General fallback grounded in real context
+    # 5. Trained Semantic Coaching NLP Retrieval (Database Knowledge Base + LinearSVC Intent Classifier)
+    from app.ml.coaching_ai_engine import coaching_ai_engine
+
+    nlp_result = coaching_ai_engine.retrieve_coaching_knowledge(user_message, top_k=2)
+    matches = nlp_result.get("matches", [])
+    predicted_intent = nlp_result.get("predicted_intent")
+    if matches:
+        sources_used.append(
+            f"Trained Coaching AI NLP ({predicted_intent or 'general'} · top match {int(matches[0]['similarity_score']*100)}%)"
+        )
+        top = matches[0]
+        kb_block = (
+            f"**AI Coaching Knowledge ({top['category'].replace('_', ' ').title()} · {top['sport']}):**\n"
+            f"{top['answer']}"
+        )
+        if len(matches) > 1 and matches[1]["similarity_score"] >= 0.16:
+            m2 = matches[1]
+            kb_block += f"\n\n**Related Insight ({m2['sport']}):** {m2['answer']}"
+        sections.append(kb_block)
+
+    # 6. General fallback grounded in real context
     if not sections:
         context_bits = [
             f"Athlete context: **{target_user.full_name}**",
@@ -1115,17 +1135,18 @@ def generate_assistant_reply(
         sections.append(
             "Here is your live coaching context:\n- "
             + "\n- ".join(context_bits)
-            + "\n\nYou can ask me to:\n"
-            "- Explain your **performance report** or **skill score**\n"
-            "- Review your **weekly training schedule**\n"
-            "- Check **injury risk & recovery adjustments**\n"
-            "- Run a **live calorie prediction** (e.g., *\"Predict calories for Running 50 minutes at 158 bpm\"*)"
+            + "\n\nYou can ask me about:\n"
+            "- Any **training, nutrition, recovery, biomechanics, or tactical** question (powered by our trained Coaching NLP AI)\n"
+            "- Your **performance report**, **skill score**, or **weekly training schedule**\n"
+            "- **Injury risk & ACWR recovery adjustments**\n"
+            "- **Live calorie predictions** (e.g., *\"Predict calories for Running 50 minutes at 158 bpm\"*)"
         )
         sources_used.append("Authorized Athlete Database Context")
 
     return {
         "reply": "\n\n".join(sections),
         "sources": sources_used,
+        "predicted_intent": predicted_intent,
         "athlete_id": target_user.id,
         "athlete_name": target_user.full_name,
     }

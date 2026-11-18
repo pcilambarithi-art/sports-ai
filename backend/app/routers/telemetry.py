@@ -180,8 +180,13 @@ async def telemetry_websocket(
         await websocket.close(code=4401)
         return
     try:
-        decode_access_token(token)
-    except HTTPException:
+        payload = decode_access_token(token)
+        sub_id = int(payload.get("sub", -1))
+        role = str(payload.get("role", ""))
+        if sub_id != athlete_id and role not in {"admin", "coach", "analyst"}:
+            await websocket.close(code=4403)
+            return
+    except (HTTPException, ValueError):
         await websocket.close(code=4401)
         return
 

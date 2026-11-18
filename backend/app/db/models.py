@@ -402,3 +402,33 @@ class ActivityLog(Base):
     entity_id = Column(Integer, nullable=True)
     summary = Column(String(300), nullable=False)
     created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False, index=True)
+
+
+class CoachingKnowledge(Base):
+    __tablename__ = "coaching_knowledge"
+
+    id = Column(Integer, primary_key=True, index=True)
+    category = Column(String(60), nullable=False, index=True)
+    sport = Column(String(60), nullable=False, default="General", index=True)
+    question_pattern = Column(String(300), nullable=False)
+    answer = Column(Text, nullable=False)
+    tags = Column(String(255), nullable=True)
+    created_by_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+
+class AIModelTrainingRun(Base):
+    __tablename__ = "ai_model_training_runs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    model_name = Column(String(120), nullable=False)
+    dataset_rows_used = Column(Integer, nullable=False, default=0)
+    db_records_used = Column(Integer, nullable=False, default=0)
+    knowledge_docs_used = Column(Integer, nullable=False, default=0)
+    accuracy = Column(Float, nullable=True)
+    macro_f1 = Column(Float, nullable=True)
+    cv_score = Column(Float, nullable=True)
+    training_seconds = Column(Float, nullable=False, default=0.0)
+    metrics_json = Column(JSON, nullable=True)
+    triggered_by_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False, index=True)

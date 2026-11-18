@@ -1,0 +1,29 @@
+{
+  "ready": true,
+  "trained_at": "2026-11-18T07:30:28Z",
+  "training_seconds": 8.05,
+  "strain_classifier": {
+    "algorithm": "HistGradientBoostingClassifier (Continuous Learning)",
+    "classes": [
+      "Recovery / Low Load",
+      "Optimal Aerobic",
+      "High Performance",
+      "Overreaching Caution"
+    ],
+    "dataset_rows_used": 70000,
+    "db_records_used": 4,
+    "total_training_samples": 70004,
+    "test_accuracy_pct": 96.89,
+    "test_macro_f1_pct": 97.01
+  },
+  "semantic_coach_nlp": {
+    "algorithm": "TF-IDF Bi-Gram Semantic Retriever + LinearSVC Intent Classifier",
+    "knowledge_documents": 1,
+    "categories": [
+      "strategy"
+    ],
+    "vocabulary_size": 45,
+    "intent_cv_accuracy_pct": null,
+    "external_llm_configured": false
+  }
+}

@@ -156,17 +156,18 @@ export function DashboardPage() {
                 <AreaChart data={performance_trend}>
                   <defs>
                     <linearGradient id="calGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.35} />
-                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.48} />
+                      <stop offset="55%" stopColor="#ec4899" stopOpacity={0.22} />
+                      <stop offset="95%" stopColor="#22d3ee" stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.25} />
-                  <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                  <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#6b21a8" opacity={0.22} />
+                  <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#c4b5fd" />
+                  <YAxis tick={{ fontSize: 11 }} stroke="#c4b5fd" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#0f172a',
-                      borderColor: '#334155',
+                      backgroundColor: '#0c0518',
+                      borderColor: '#a855f7',
                       borderRadius: '12px',
                       color: '#f8fafc',
                       fontSize: '12px',
@@ -176,8 +177,8 @@ export function DashboardPage() {
                     type="monotone"
                     dataKey="calories"
                     name="Calories (kcal)"
-                    stroke="#06b6d4"
-                    strokeWidth={2.5}
+                    stroke="#c084fc"
+                    strokeWidth={2.8}
                     fill="url(#calGrad)"
                   />
                 </AreaChart>

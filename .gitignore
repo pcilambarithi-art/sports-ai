@@ -22,6 +22,9 @@ backend/uploads/
 uploads/
 *.log
 
+# Auto-generated Companion AI Pickle Binaries (auto-retrained on startup)
+backend/trained_coaching_ai/*.pkl
+
 # Terraform Secrets & State
 deploy/aws/.terraform/
 deploy/aws/terraform.tfvars

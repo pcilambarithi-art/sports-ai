@@ -10,6 +10,7 @@ from app.db.models import (
     AIPrediction,
     ActivityLog,
     ChatMessage,
+    CoachingKnowledge,
     InjuryRiskAssessment,
     PerformanceRecord,
     TrainingProgram,
@@ -18,8 +19,10 @@ from app.db.models import (
     UserRole,
     VideoAnalysis,
 )
+from app.ml.coaching_ai_engine import coaching_ai_engine
 from app.ml.model_service import model_service
-from app.schemas.schemas import AssistantChatRequest
+from app.schemas.schemas import AssistantChatRequest, CoachingKnowledgeCreate
+from app.services.activity_service import log_activity
 from app.services.analytics_service import generate_assistant_reply
 
 router = APIRouter(tags=["Virtual Coaching Assistant & Dashboard"])
@@ -96,6 +99,63 @@ def assistant_history(
     ]
 
 
+@router.get("/api/assistant/knowledge")
+def list_coaching_knowledge(
+    db: Session = Depends(get_db),
+    _current_user: User = Depends(get_current_user),
+):
+    rows = db.query(CoachingKnowledge).order_by(CoachingKnowledge.id.desc()).limit(100).all()
+    return [
+        {
+            "id": r.id,
+            "category": r.category,
+            "sport": r.sport,
+            "question_pattern": r.question_pattern,
+            "answer": r.answer,
+            "tags": r.tags,
+            "created_at": r.created_at.isoformat(),
+        }
+        for r in rows
+    ]
+
+
+@router.post("/api/assistant/knowledge", status_code=201)
+def add_coaching_knowledge(
+    payload: CoachingKnowledgeCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Add custom team/sport coaching knowledge into the DB and retrain the Semantic Coaching AI."""
+    item = CoachingKnowledge(
+        category=payload.category.strip().lower().replace(" ", "_"),
+        sport=payload.sport.strip(),
+        question_pattern=payload.question_pattern.strip(),
+        answer=payload.answer.strip(),
+        tags=payload.tags.strip() if payload.tags else None,
+        created_by_id=current_user.id,
+    )
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    metrics = coaching_ai_engine.train_all(db, triggered_by_id=current_user.id)
+    log_activity(
+        db,
+        current_user.id,
+        "knowledge_added",
+        "coaching_knowledge",
+        f"Added coaching knowledge ({item.sport} · {item.category}) and retrained Coaching AI.",
+        entity_id=item.id,
+    )
+    return {
+        "id": item.id,
+        "category": item.category,
+        "sport": item.sport,
+        "question_pattern": item.question_pattern,
+        "answer": item.answer,
+        "retrained_metrics": metrics["semantic_coach_nlp"],
+    }
+
+
 @router.get("/api/dashboard/overview")
 def get_dashboard_overview(
     db: Session = Depends(get_db),
@@ -129,15 +189,13 @@ def get_dashboard_overview(
     total_predictions = pred_q.count()
     total_videos = vid_q.count()
 
-    avg_pred_cals = (
-        db.query(func.avg(AIPrediction.predicted_calories))
-        .filter(
-            (AIPrediction.athlete_id == current_user.id) | (AIPrediction.requested_by_id == current_user.id)
-            if is_athlete_only
-            else True
+    avg_q = db.query(func.avg(AIPrediction.predicted_calories))
+    if is_athlete_only:
+        avg_q = avg_q.filter(
+            (AIPrediction.athlete_id == current_user.id)
+            | (AIPrediction.requested_by_id == current_user.id)
         )
-        .scalar()
-    )
+    avg_pred_cals = avg_q.scalar()
 
     recent_perf = perf_q.order_by(PerformanceRecord.session_date.desc()).limit(10).all()
     recent_preds = pred_q.order_by(AIPrediction.created_at.desc()).limit(6).all()

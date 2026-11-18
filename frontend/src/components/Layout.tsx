@@ -30,7 +30,6 @@ interface NavItem {
   to: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  roles?: string[];
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -48,10 +47,10 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const ROLE_COLORS: Record<string, string> = {
-  admin: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
-  coach: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
-  analyst: 'bg-violet-500/15 text-violet-400 border-violet-500/30',
-  athlete: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  admin: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40',
+  coach: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
+  analyst: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+  athlete: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
 };
 
 export function Layout() {
@@ -68,29 +67,29 @@ export function Layout() {
   const renderModelPill = () => {
     if (!modelStatus) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-          <Cpu className="w-3.5 h-3.5 animate-pulse" /> Checking AI Model...
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-purple-950/60 border border-purple-500/30 text-purple-200">
+          <Cpu className="w-3.5 h-3.5 animate-pulse" /> Checking AI Models...
         </span>
       );
     }
     if (modelStatus.ready) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          Trained Model Ready ({modelStatus.metrics.test_r2_pct ?? '91.8'}% R²)
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-500/20 via-fuchsia-500/20 to-cyan-500/20 text-purple-700 dark:text-cyan-300 border border-purple-400/40 shadow-[0_0_16px_-4px_rgba(168,85,247,0.6)]">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+          AI Models Ready ({modelStatus.metrics.test_r2_pct ?? '91.81'}% R²)
         </span>
       );
     }
     if (modelStatus.status === 'loading') {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-400/35">
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
           Loading 2.93 GB Model ({modelStatus.loading_elapsed_seconds ?? 0}s)...
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-500 border border-rose-500/30">
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/35">
         <span className="w-2 h-2 rounded-full bg-rose-500" />
         Model Offline ({modelStatus.status})
       </span>
@@ -98,30 +97,31 @@ export function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50 dark:bg-[#070B14] text-slate-900 dark:text-slate-100">
-      {/* Mobile overlay */}
+    <div className="min-h-screen flex app-cosmic-bg text-slate-900 dark:text-purple-50">
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden"
+          className="fixed inset-0 z-40 bg-black/75 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Glossy Purple-Black Sidebar with Glowing Neon Edge */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen flex flex-col bg-white dark:bg-[#0B1222] border-r border-slate-200 dark:border-slate-800/90 transition-all duration-200 ${
+        className={`fixed lg:sticky top-0 left-0 z-50 h-screen flex flex-col bg-white/90 dark:bg-[#080312]/92 backdrop-blur-2xl border-r border-purple-300/60 dark:border-purple-500/30 shadow-[4px_0_32px_-12px_rgba(168,85,247,0.45)] transition-all duration-200 ${
           collapsed ? 'w-20' : 'w-64'
         } ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
-        <div className="h-16 px-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/80">
+        <div className="h-16 px-4 flex items-center justify-between border-b border-purple-200/70 dark:border-purple-500/20">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center shrink-0 shadow-lg shadow-cyan-500/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 via-fuchsia-500 to-cyan-400 flex items-center justify-center shrink-0 shadow-[0_0_18px_rgba(192,38,211,0.6)]">
               <Activity className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
               <div className="leading-tight">
-                <div className="font-extrabold text-sm tracking-tight">ApexPulse AI</div>
-                <div className="text-[10px] font-semibold uppercase tracking-widest text-cyan-500">
+                <div className="font-extrabold text-sm tracking-tight bg-gradient-to-r from-purple-400 via-fuchsia-400 to-cyan-300 bg-clip-text text-transparent">
+                  ApexPulse AI
+                </div>
+                <div className="text-[10px] font-semibold uppercase tracking-widest text-purple-500 dark:text-purple-300/80">
                   Sports Coaching
                 </div>
               </div>
@@ -129,14 +129,14 @@ export function Layout() {
           </div>
           <button
             onClick={() => setCollapsed((c) => !c)}
-            className="hidden lg:inline-flex p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="hidden lg:inline-flex p-1.5 rounded-lg text-purple-400 hover:text-purple-200 hover:bg-purple-500/15 cursor-pointer"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-slate-400"
+            className="lg:hidden p-1.5 rounded-lg text-purple-400"
           >
             <X className="w-5 h-5" />
           </button>
@@ -154,8 +154,8 @@ export function Layout() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-cyan-500/15 to-emerald-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent'
+                      ? 'bg-gradient-to-r from-purple-600/30 via-fuchsia-600/20 to-cyan-500/15 text-purple-700 dark:text-white border border-purple-400/50 shadow-[0_0_18px_-6px_rgba(192,38,211,0.75)]'
+                      : 'text-slate-600 dark:text-purple-200/70 hover:bg-purple-500/10 hover:text-purple-800 dark:hover:text-white border border-transparent'
                   }`
                 }
                 title={collapsed ? item.label : undefined}
@@ -167,11 +167,11 @@ export function Layout() {
           })}
         </nav>
 
-        <div className="p-3 border-t border-slate-200 dark:border-slate-800/80">
+        <div className="p-3 border-t border-purple-200/70 dark:border-purple-500/20">
           {user && (
             <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} gap-2`}>
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400 shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600/40 to-fuchsia-600/40 border border-purple-400/40 flex items-center justify-center font-bold text-xs text-purple-700 dark:text-purple-100 shrink-0 shadow-[0_0_12px_rgba(168,85,247,0.4)]">
                   {user.avatar_initials}
                 </div>
                 {!collapsed && (
@@ -190,7 +190,7 @@ export function Layout() {
               {!collapsed && (
                 <button
                   onClick={logout}
-                  className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                  className="p-2 rounded-lg text-purple-400 hover:text-rose-400 hover:bg-rose-500/15 transition-colors cursor-pointer"
                   title="Sign out"
                 >
                   <LogOut className="w-4 h-4" />
@@ -201,29 +201,29 @@ export function Layout() {
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="sticky top-0 z-30 h-16 px-4 lg:px-8 flex items-center justify-between bg-white/85 dark:bg-[#070B14]/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80">
+        <header className="sticky top-0 z-30 h-16 px-4 lg:px-8 flex items-center justify-between bg-white/80 dark:bg-[#070310]/80 backdrop-blur-xl border-b border-purple-200/70 dark:border-purple-500/25">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800"
+              className="lg:hidden p-2 rounded-xl bg-purple-500/15 text-purple-400"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="text-base lg:text-lg font-bold tracking-tight">{currentItem.label}</h1>
-            </div>
+            <h1 className="text-base lg:text-lg font-extrabold tracking-tight bg-gradient-to-r from-purple-600 via-fuchsia-500 to-cyan-500 dark:from-white dark:via-purple-200 dark:to-cyan-200 bg-clip-text text-transparent">
+              {currentItem.label}
+            </h1>
           </div>
 
           <div className="flex items-center gap-2.5">
             <div className="hidden sm:block">{renderModelPill()}</div>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-purple-100/80 dark:bg-[#170A2C] hover:bg-purple-200 dark:hover:bg-[#231042] border border-purple-300/60 dark:border-purple-500/35 text-purple-700 dark:text-purple-200 transition-colors cursor-pointer"
               title="Toggle dark/light theme"
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4" />}
             </button>
           </div>
         </header>

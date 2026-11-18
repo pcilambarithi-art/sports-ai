@@ -38,19 +38,22 @@ export function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-slate-50 dark:bg-[#070B14] text-slate-900 dark:text-slate-100">
-      {/* Left Hero Panel */}
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-[#0B1222] via-[#0F1B33] to-[#08192B] text-white relative overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-emerald-500/15 blur-3xl" />
+    <div className="min-h-screen grid lg:grid-cols-2 app-cosmic-bg text-slate-900 dark:text-purple-50">
+      {/* Left Glossy Purple-Black Hero Panel */}
+      <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-[#06020D] via-[#13072B] to-[#080214] text-white relative overflow-hidden border-r border-purple-500/30">
+        <div className="absolute -top-24 -left-24 w-[28rem] h-[28rem] rounded-full bg-purple-600/25 blur-3xl" />
+        <div className="absolute top-1/2 -right-24 w-80 h-80 rounded-full bg-fuchsia-600/20 blur-3xl" />
+        <div className="absolute -bottom-20 left-1/3 w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl" />
 
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-500 via-fuchsia-500 to-cyan-400 flex items-center justify-center shadow-[0_0_24px_rgba(192,38,211,0.7)]">
             <Activity className="w-6 h-6 text-white" />
           </div>
           <div>
-            <div className="text-xl font-extrabold tracking-tight">ApexPulse AI</div>
-            <div className="text-xs uppercase tracking-widest text-cyan-400 font-semibold">
+            <div className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
+              ApexPulse AI
+            </div>
+            <div className="text-xs uppercase tracking-widest text-fuchsia-300 font-semibold">
               Sports Coaching Intelligence
             </div>
           </div>
@@ -58,23 +61,23 @@ export function AuthPage() {
 
         <div className="relative z-10 space-y-6 max-w-lg">
           <h2 className="text-4xl font-extrabold leading-tight tracking-tight">
-            Real ML Models. Real Telemetry.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
-              Zero Guesswork.
+            Trained ML Models. Live Vision.{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-cyan-300">
+              Next-Gen Coaching.
             </span>
           </h2>
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Powered directly by your trained 300-tree ExtraTreesRegressor calorie model (91.81% R² on
-            70,000 workout profiles), integrated with OpenCV movement analysis, adaptive training
-            schedules, workload injury prevention, game strategy, and a data-grounded virtual coach.
+          <p className="text-purple-100/75 text-sm leading-relaxed">
+            Powered by your preserved 300-tree ExtraTreesRegressor calorie model (91.81% R² on 70,000
+            workouts) paired with our continuously trained Readiness Classifier, Semantic NLP Virtual
+            Coach, OpenCV movement tracking, workload injury prevention, and game strategy engine.
           </p>
 
           <div className="grid grid-cols-1 gap-3 pt-2">
             {[
               {
                 icon: Brain,
-                title: 'Integrated Trained ML Pipeline',
-                desc: 'Direct scikit-learn inference with 300-tree uncertainty bands & what-if explanations.',
+                title: 'Dual Trained AI / ML Engine',
+                desc: 'Your D:\\V3 ExtraTrees model + DB-trained Strain Classifier & Semantic Coaching NLP.',
               },
               {
                 icon: Video,
@@ -91,14 +94,14 @@ export function AuthPage() {
               return (
                 <div
                   key={feat.title}
-                  className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10"
+                  className="flex items-start gap-3 p-3.5 rounded-2xl bg-purple-950/40 backdrop-blur-md border border-purple-400/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]"
                 >
-                  <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-300 shrink-0">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-purple-400/30 text-cyan-300 shrink-0">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="text-sm font-semibold">{feat.title}</div>
-                    <div className="text-xs text-slate-400">{feat.desc}</div>
+                    <div className="text-xs text-purple-200/70">{feat.desc}</div>
                   </div>
                 </div>
               );
@@ -106,22 +109,22 @@ export function AuthPage() {
           </div>
         </div>
 
-        <div className="relative z-10 text-xs text-slate-400">
-          Model Artifact: <span className="font-mono text-cyan-300">D:\V3\trained_models\calorie_prediction_model.pkl</span>
+        <div className="relative z-10 text-xs text-purple-300/70">
+          Primary Model: <span className="font-mono text-cyan-300">D:\V3\trained_models\calorie_prediction_model.pkl</span>
         </div>
       </div>
 
-      {/* Right Auth Form */}
+      {/* Right Glossy Auth Card */}
       <div className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md glass-card p-8">
           <div className="flex items-center gap-2 mb-6 lg:hidden">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 via-fuchsia-500 to-cyan-400 flex items-center justify-center">
               <Activity className="w-5 h-5 text-white" />
             </div>
             <span className="font-extrabold text-lg">ApexPulse AI</span>
           </div>
 
-          <div className="flex rounded-xl p-1 bg-slate-100 dark:bg-slate-800/80 mb-6">
+          <div className="flex rounded-xl p-1 bg-purple-100/80 dark:bg-[#120724] border border-purple-300/40 dark:border-purple-500/25 mb-6">
             <button
               type="button"
               onClick={() => {
@@ -130,8 +133,8 @@ export function AuthPage() {
               }}
               className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer ${
                 mode === 'login'
-                  ? 'bg-white dark:bg-slate-900 shadow-xs text-cyan-600 dark:text-cyan-400'
-                  : 'text-slate-500'
+                  ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white shadow-[0_0_14px_rgba(192,38,211,0.5)]'
+                  : 'text-purple-400'
               }`}
             >
               Sign In
@@ -144,8 +147,8 @@ export function AuthPage() {
               }}
               className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer ${
                 mode === 'register'
-                  ? 'bg-white dark:bg-slate-900 shadow-xs text-cyan-600 dark:text-cyan-400'
-                  : 'text-slate-500'
+                  ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white shadow-[0_0_14px_rgba(192,38,211,0.5)]'
+                  : 'text-purple-400'
               }`}
             >
               Create Account
@@ -155,14 +158,14 @@ export function AuthPage() {
           <h1 className="text-2xl font-extrabold tracking-tight">
             {mode === 'login' ? 'Welcome back' : 'Join ApexPulse AI'}
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-6">
+          <p className="text-xs text-slate-500 dark:text-purple-200/70 mt-1 mb-6">
             {mode === 'login'
               ? 'Sign in with your coaching or athlete credentials.'
               : 'Create a secure role-based account to start logging and analyzing real performance data.'}
           </p>
 
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs font-medium">
+            <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-400 text-xs font-medium">
               {error}
             </div>
           )}

@@ -55,18 +55,37 @@ export function AiPredictionLabPage() {
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchResult, setBatchResult] = useState<any>(null);
 
+  const [companionAi, setCompanionAi] = useState<any>(null);
+  const [retraining, setRetraining] = useState(false);
+
   const loadData = async () => {
     try {
-      const [hist, bench, usersList] = await Promise.all([
+      const [hist, bench, usersList, compStatus] = await Promise.all([
         apiRequest<any[]>('/api/ml/predictions?limit=30'),
         apiRequest<any>('/api/ml/benchmarks'),
         apiRequest<User[]>('/api/users?role=athlete'),
+        apiRequest<any>('/api/ml/coaching-ai-status'),
       ]);
       setHistory(hist);
       setBenchmarks(bench);
       setAthletes(usersList);
+      setCompanionAi(compStatus);
     } catch {
       // handled gracefully
+    }
+  };
+
+  const handleRetrainCompanion = async () => {
+    setRetraining(true);
+    setError(null);
+    try {
+      await apiRequest('/api/ml/train-coaching-ai', { method: 'POST' });
+      await loadData();
+      await refreshModelStatus();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setRetraining(false);
     }
   };
 
@@ -410,6 +429,32 @@ export function AiPredictionLabPage() {
                 </div>
               </div>
 
+              {result.strain_zone && (
+                <div className="p-4 rounded-xl bg-purple-500/15 border border-purple-400/35 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
+                      Trained Companion AI · Strain &amp; Readiness Classification
+                    </div>
+                    <div className="text-sm font-extrabold text-purple-100 mt-0.5">
+                      {result.strain_zone.zone}{' '}
+                      <span className="font-mono text-xs text-cyan-300">
+                        ({result.strain_zone.confidence_pct}% probability)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 text-[10px] font-mono">
+                    {Object.entries(result.strain_zone.probabilities || {}).map(([k, v]: [string, any]) => (
+                      <span
+                        key={k}
+                        className="px-2 py-1 rounded-lg bg-[#0d051a] border border-purple-500/30 text-purple-200"
+                      >
+                        {k.split(' ')[0]}: {v}%
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {result.newly_unlocked_badges?.length > 0 && (
                 <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-xs text-emerald-400 flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
@@ -545,6 +590,69 @@ export function AiPredictionLabPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Continuous-Learning Companion AI Training Center */}
+      <div className="glass-card p-6 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-extrabold flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-fuchsia-400" /> Continuous-Learning Companion Coaching AI (Dataset + Live Database)
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-purple-200/70">
+              Trains the Strain/Readiness Classifier &amp; Semantic Coaching NLP engine on 70,000 dataset rows + live database sessions &amp; coaching knowledge — while keeping your D:\V3 model 100% untouched.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleRetrainCompanion}
+            disabled={retraining}
+            className="btn-primary text-xs"
+          >
+            {retraining ? 'Training on 70k + DB...' : 'Retrain Companion AI Now'}
+          </button>
+        </div>
+
+        {companionAi?.metrics?.ready && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30">
+              <div className="text-[10px] uppercase text-purple-300/70">Strain Classifier Accuracy</div>
+              <div className="text-lg font-extrabold text-cyan-300 mt-1">
+                {companionAi.metrics.strain_classifier.test_accuracy_pct}%
+              </div>
+              <div className="text-[10px] text-purple-300/60">
+                Macro-F1: {companionAi.metrics.strain_classifier.test_macro_f1_pct}%
+              </div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30">
+              <div className="text-[10px] uppercase text-purple-300/70">Training Samples</div>
+              <div className="text-lg font-extrabold text-fuchsia-300 mt-1">
+                {companionAi.metrics.strain_classifier.total_training_samples.toLocaleString()}
+              </div>
+              <div className="text-[10px] text-purple-300/60">
+                70k Dataset + {companionAi.metrics.strain_classifier.db_records_used} DB Logs
+              </div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30">
+              <div className="text-[10px] uppercase text-purple-300/70">Semantic NLP Knowledge</div>
+              <div className="text-lg font-extrabold text-emerald-300 mt-1">
+                {companionAi.metrics.semantic_coach_nlp.knowledge_documents} Docs
+              </div>
+              <div className="text-[10px] text-purple-300/60">
+                Vocab: {companionAi.metrics.semantic_coach_nlp.vocabulary_size} bi-grams
+              </div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30">
+              <div className="text-[10px] uppercase text-purple-300/70">NLP Intent CV Accuracy</div>
+              <div className="text-lg font-extrabold text-purple-200 mt-1">
+                {companionAi.metrics.semantic_coach_nlp.intent_cv_accuracy_pct ?? 'Trained'}%
+              </div>
+              <div className="text-[10px] text-purple-300/60">
+                Last run: {companionAi.metrics.training_seconds}s
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Batch Prediction Upload */}

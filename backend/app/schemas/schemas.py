@@ -248,3 +248,11 @@ class ChallengeProgressUpdate(BaseModel):
 class AssistantChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000)
     athlete_id: Optional[int] = None
+
+
+class CoachingKnowledgeCreate(BaseModel):
+    category: str = Field(..., min_length=2, max_length=60)
+    sport: str = Field(default="General", max_length=60)
+    question_pattern: str = Field(..., min_length=5, max_length=300)
+    answer: str = Field(..., min_length=10, max_length=3000)
+    tags: Optional[str] = Field(default=None, max_length=255)

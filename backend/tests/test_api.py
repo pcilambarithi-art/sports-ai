@@ -397,15 +397,33 @@ def test_full_system_workflow(client: TestClient, tmp_path: Path):
     assert gam.status_code == 200
     assert gam.json()["user_summary"]["total_points"] > 0
 
-    # 12. Virtual Coaching Assistant
+    # 12. Virtual Coaching Assistant + Trained Semantic NLP + Knowledge Base + Companion AI Retraining
+    kb_add = client.post(
+        "/api/assistant/knowledge",
+        json={
+            "category": "strategy",
+            "sport": "Track & Field",
+            "question_pattern": "How should 800m runners pace the first 400m split?",
+            "answer": "Run a controlled 1.5-2 second positive split on the opening 400m to stay relaxed without crossing early anaerobic threshold.",
+            "tags": "800m,pacing,splits,track",
+        },
+        headers=_auth_header(coach_token),
+    )
+    assert kb_add.status_code == 201
+
     chat = client.post(
         "/api/assistant/chat",
-        json={"message": "Give me a summary of my performance report and training schedule."},
+        json={"message": "Give me a summary of my performance report, training schedule, and how 800m runners pace the first 400m split."},
         headers=_auth_header(athlete_token),
     )
     assert chat.status_code == 200
     assert "Training Plan" in chat.json()["reply"]
     assert "Performance Summary" in chat.json()["reply"]
+    assert "AI Coaching Knowledge" in chat.json()["reply"]
+
+    ai_status = client.get("/api/ml/coaching-ai-status", headers=_auth_header(admin_token))
+    assert ai_status.status_code == 200
+    assert ai_status.json()["metrics"]["strain_classifier"]["test_accuracy_pct"] >= 90.0
 
     # 13. Dashboard real DB metrics
     dash = client.get("/api/dashboard/overview", headers=_auth_header(admin_token))

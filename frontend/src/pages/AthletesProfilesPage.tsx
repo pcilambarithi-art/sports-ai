@@ -96,6 +96,27 @@ export function AthletesProfilesPage() {
     loadAll(selectedAthleteId);
   }, [selectedAthleteId]);
 
+  useEffect(() => {
+    if (!user) return;
+    setProfileForm({
+      full_name: user.full_name || '',
+      bio: user.bio || '',
+      sport: user.athlete_profile?.sport || user.coach_profile?.specialization || '',
+      age: user.athlete_profile?.age ?? '',
+      gender: user.athlete_profile?.gender || 'Male',
+      weight_kg: user.athlete_profile?.weight_kg ?? '',
+      height_cm: user.athlete_profile?.height_cm ?? '',
+      experience_level: user.athlete_profile?.experience_level || 'Intermediate',
+      fitness_goal: user.athlete_profile?.fitness_goal || 'Endurance',
+      preferred_exercise: user.athlete_profile?.preferred_exercise || 'Running',
+      workout_frequency_per_week: user.athlete_profile?.workout_frequency_per_week ?? 4,
+      avg_sleep_hours: user.athlete_profile?.avg_sleep_hours ?? 7.5,
+      avg_water_intake_liters: user.athlete_profile?.avg_water_intake_liters ?? 2.5,
+      team_name: user.coach_profile?.team_name || '',
+      years_experience: user.coach_profile?.years_experience ?? '',
+    });
+  }, [user]);
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);

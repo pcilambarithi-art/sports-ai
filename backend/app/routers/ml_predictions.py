@@ -8,7 +8,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import can_access_athlete, get_current_user
 from app.db.database import get_db
-from app.db.models import AIPrediction, User, UserRole
+from app.db.models import AIModelTrainingRun, AIPrediction, User, UserRole
+from app.ml.coaching_ai_engine import coaching_ai_engine
 from app.ml.model_service import ModelNotReadyError, model_service
 from app.schemas.schemas import CaloriePredictionRequest
 from app.services.activity_service import log_activity
@@ -51,7 +52,65 @@ def _serialize_prediction(p: AIPrediction, athlete_name: Optional[str] = None) -
 @router.get("/status")
 def get_model_status():
     """Return real status, file path, verified evaluation metrics, and limitations of the user's trained model."""
-    return model_service.get_status()
+    status_data = model_service.get_status()
+    status_data["companion_ai"] = coaching_ai_engine.metrics or {"ready": coaching_ai_engine.ready}
+    return status_data
+
+
+@router.get("/coaching-ai-status")
+def get_coaching_ai_status(
+    db: Session = Depends(get_db),
+    _current_user: User = Depends(get_current_user),
+):
+    runs = (
+        db.query(AIModelTrainingRun)
+        .order_by(AIModelTrainingRun.created_at.desc())
+        .limit(10)
+        .all()
+    )
+    return {
+        "metrics": coaching_ai_engine.metrics or {"ready": coaching_ai_engine.ready},
+        "training_history": [
+            {
+                "id": r.id,
+                "model_name": r.model_name,
+                "dataset_rows_used": r.dataset_rows_used,
+                "db_records_used": r.db_records_used,
+                "knowledge_docs_used": r.knowledge_docs_used,
+                "accuracy_pct": round(r.accuracy * 100.0, 2) if r.accuracy is not None else None,
+                "macro_f1_pct": round(r.macro_f1 * 100.0, 2) if r.macro_f1 is not None else None,
+                "cv_score_pct": round(r.cv_score * 100.0, 2) if r.cv_score is not None else None,
+                "training_seconds": r.training_seconds,
+                "created_at": r.created_at.isoformat(),
+            }
+            for r in runs
+        ],
+    }
+
+
+@router.post("/train-coaching-ai")
+def retrain_companion_coaching_ai(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Continuously train the companion Strain/Readiness Classifier & Semantic Coaching NLP AI
+    on the 70k dataset + live database records + coaching knowledge base.
+    Leaves D:\\V3\\trained_models\\calorie_prediction_model.pkl 100% untouched.
+    """
+    metrics = coaching_ai_engine.train_all(db, triggered_by_id=current_user.id)
+    log_activity(
+        db,
+        current_user.id,
+        "companion_ai_retrained",
+        "ai_model",
+        (
+            f"Retrained Companion Coaching AI on {metrics['strain_classifier']['total_training_samples']:,} "
+            f"samples ({metrics['strain_classifier']['test_accuracy_pct']}% acc) & "
+            f"{metrics['semantic_coach_nlp']['knowledge_documents']} knowledge docs."
+        ),
+    )
+    return metrics
 
 
 @router.get("/benchmarks")
@@ -137,6 +196,16 @@ def predict_calories(
     resp = _serialize_prediction(record, athlete.full_name if athlete else None)
     resp["ensemble_agreement_pct"] = result["ensemble_agreement_pct"]
     resp["exercise_benchmark"] = result["exercise_benchmark"]
+    resp["strain_zone"] = coaching_ai_engine.predict_strain_zone(
+        age=payload.Age,
+        duration=payload.Duration_Minutes,
+        hr=payload.Heart_Rate_BPM,
+        freq=payload.Workout_Frequency_Per_Week,
+        sleep=payload.Sleep_Hours,
+        water=payload.Water_Intake_Liters,
+        weight=payload.Weight_KG,
+        predicted_calories=record.predicted_calories,
+    )
     resp["newly_unlocked_badges"] = unlocked
     return resp
 
@@ -232,7 +301,14 @@ def export_predictions_csv(
             **item["inputs"],
         }
         flat.append(row)
-    df = pd.DataFrame(flat)
+    columns = [
+        "id", "athlete_name", "created_at", "predicted_calories", "burn_rate_per_min",
+        "confidence_low", "confidence_high", "dataset_percentile",
+        "Age", "Gender", "Weight_KG", "Exercise_Type", "Duration_Minutes",
+        "Heart_Rate_BPM", "Workout_Frequency_Per_Week", "Sleep_Hours",
+        "Water_Intake_Liters", "Fitness_Goal", "Experience_Level",
+    ]
+    df = pd.DataFrame(flat, columns=columns) if not flat else pd.DataFrame(flat)
     buf = io.StringIO()
     df.to_csv(buf, index=False)
     buf.seek(0)

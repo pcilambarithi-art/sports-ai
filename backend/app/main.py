@@ -6,7 +6,9 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.db.database import SessionLocal
 from app.db.init_db import init_db
+from app.ml.coaching_ai_engine import coaching_ai_engine
 from app.ml.model_service import model_service
 from app.routers import (
     assistant_dashboard,
@@ -31,10 +33,16 @@ logger = logging.getLogger("apexpulse")
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    logger.info("Initializing database tables and static badge catalog...")
+    logger.info("Initializing database tables, badge catalog, and coaching knowledge base...")
     init_db()
     logger.info("Loading model metadata and 70k dataset benchmarks...")
     model_service.initialize_metadata_and_benchmarks()
+    logger.info("Loading/training Companion Coaching AI (Strain Classifier + Semantic NLP)...")
+    db = SessionLocal()
+    try:
+        coaching_ai_engine.load_or_train(db)
+    finally:
+        db.close()
     if settings.AUTO_LOAD_MODEL:
         logger.info("Starting background loader for existing trained model at %s", settings.model_path)
         model_service.start_background_load()
