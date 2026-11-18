@@ -147,11 +147,11 @@ def build_pdf():
 
     # Executive Summary Table
     summary_data = [
-        [Paragraph("<b>Project Repository</b>", cell_bold), Paragraph("https://github.com/pcilambarithi-art/sports-ai (Branch: main)", cell_style)],
+        [Paragraph("<b>GitHub &amp; Live Web</b>", cell_bold), Paragraph("Repo: https://github.com/pcilambarithi-art/sports-ai (Branch: main, 150+ tracked files incl. ml_source_v3/ backup)<br/>GitHub Pages Live UI: https://pcilambarithi-art.github.io/sports-ai/", cell_style)],
         [Paragraph("<b>Primary Trained Model</b>", cell_bold), Paragraph("Existing D:\\V3 ExtraTreesRegressor (300 trees, 2.93 GB, preserved 100% read-only) — Verified Test R²: 91.81%, MAE: 61.36 kcal, 5-Fold CV R²: 91.71%", cell_style)],
         [Paragraph("<b>Companion Trained AI</b>", cell_bold), Paragraph("HistGradientBoosting Strain & Readiness Classifier (97.00% Test Accuracy, 97.14% Macro-F1 on 70,000+ rows) + TF-IDF Bi-Gram & LinearSVC Semantic Virtual Coach (30 curated knowledge docs, 2,081 bi-gram vocab)", cell_style)],
         [Paragraph("<b>Application Scale</b>", cell_bold), Paragraph("49 REST & WebSocket API Endpoints • 22 Relational Database Tables (Alembic-migrated) • 12 Glossy Purple-Black Neon React Modules • OpenCV Computer Vision Video Pipeline", cell_style)],
-        [Paragraph("<b>Verification Status</b>", cell_bold), Paragraph("Pytest Full Integration Suite PASSED • Live 2.93 GB Model HTTP Inference Test PASSED • Frontend Production Build PASSED (0 TS errors, 0 warnings) • Live Public HTTPS Verified (HTTP 200)", cell_style)],
+        [Paragraph("<b>Verification Status</b>", cell_bold), Paragraph("Pytest Full Integration Suite PASSED • Live 2.93 GB Model HTTP Inference Test PASSED • Frontend Production Build PASSED (0 TS errors, 0 warnings) • GitHub Pages & Live Public HTTPS Verified (HTTP 200)", cell_style)],
     ]
     summary_tbl = Table(summary_data, colWidths=[45 * mm, 129 * mm])
     summary_tbl.setStyle(
@@ -369,14 +369,23 @@ def build_pdf():
     story.append(Spacer(1, 10))
 
     # Deployment Options Summary
-    story.append(Paragraph("Deployment & Access Options (Zero-AWS and Cloud Ready)", h1_style))
+    story.append(Paragraph("Deployment, GitHub Backup &amp; Always-On Access Architecture", h1_style))
     story.append(
         Paragraph(
-            "• <b>Zero-AWS Local + Free Public HTTPS:</b> Run start-local.ps1 + start-public-tunnel.ps1 (Cloudflare Tunnel) "
-            "to serve the complete system including the 2.93 GB trained model over HTTPS for free.<br/>"
-            "• <b>Non-AWS Cloud / Self-Hosted:</b> docker-compose.yml (PostgreSQL 16 + FastAPI + Nginx), railway.toml (Railway Docker), "
-            "and netlify.toml (Netlify React Frontend).<br/>"
-            "• <b>Optional AWS Production IaC:</b> deploy/aws/main.tf (VPC, encrypted RDS PostgreSQL 16, S3 model storage, EC2 m6i.xlarge, CloudWatch).",
+            "• <b>Live GitHub Pages Frontend + Remote Backend Connector:</b> Published built React app at "
+            "https://pcilambarithi-art.github.io/sports-ai/ (.nojekyll + /sports-ai/ Vite base + HashRouter + "
+            ".github/workflows/deploy-pages.yml) with an in-app Backend Server URL connector and CORS enabled.<br/>"
+            "• <b>Zero-AWS Always-On Free 16 GB RAM Backend (Hugging Face Spaces):</b> Ready-to-run Docker Space "
+            "deployment in deploy/huggingface/ (Dockerfile, README_HF_SPACE.md, and automated deploy-hf-space.py) "
+            "designed to host the 2.93 GB ExtraTrees model and FastAPI backend on a permanent HTTPS URL that auto-wakes "
+            "whenever someone opens GitHub Pages (requires your personal HF_TOKEN to authenticate).<br/>"
+            "• <b>Zero-AWS Local &amp; Instant Free Public HTTPS:</b> Double-click START_APEXPULSE.bat (or run "
+            "start-local.ps1 + start-public-tunnel.ps1 using Cloudflare Tunnel) to run locally or share globally over HTTPS.<br/>"
+            "• <b>Full GitHub Source &amp; Dataset Backup:</b> All application code, documentation PDF, deployment configs, "
+            "and original D:\\V3 scripts/metadata/70,000-row datasets (ml_source_v3/) are backed up on GitHub "
+            "(the 2.93 GB .pkl binary is excluded due to GitHub's 100 MB file cap and reproducible via ml_source_v3/train.py).<br/>"
+            "• <b>Additional Cloud Options Included:</b> docker-compose.yml (PostgreSQL 16 + FastAPI + Nginx), "
+            "railway.toml (Railway Docker), netlify.toml (Netlify Frontend), and deploy/aws/main.tf (AWS Terraform IaC).",
             body_style,
         )
     )
