@@ -7,7 +7,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
     HRFlowable,
-    PageBreak,
+    KeepTogether,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
@@ -244,7 +244,6 @@ def build_pdf():
     ]
 
     for title, what_did, what_used, why_used in tasks:
-        story.append(Paragraph(title, h2_style))
         block_tbl = Table(
             [
                 [Paragraph("<b>What We Built</b>", cell_bold), Paragraph(what_did, cell_style)],
@@ -269,12 +268,10 @@ def build_pdf():
                 ]
             )
         )
-        story.append(block_tbl)
-        story.append(Spacer(1, 5))
+        story.append(KeepTogether([Paragraph(title, h2_style), block_tbl, Spacer(1, 5)]))
 
-    story.append(PageBreak())
-
-    # Verified AI / ML Metrics & Database Summary Page
+    # Verified AI / ML Metrics & Database Summary Section
+    story.append(Spacer(1, 6))
     story.append(Paragraph("Verified AI / ML Model & Testing Metrics Summary", h1_style))
     metrics_tbl = Table(
         [
