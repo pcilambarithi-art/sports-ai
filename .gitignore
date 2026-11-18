@@ -1,0 +1,36 @@
+# Python & Virtual Environments
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Node & Frontend Build
+node_modules/
+frontend/dist/
+
+# Environment Secrets & Local Databases
+.env
+backend/.env
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded User Media & Logs
+backend/uploads/
+uploads/
+*.log
+
+# Terraform Secrets & State
+deploy/aws/.terraform/
+deploy/aws/terraform.tfvars
+deploy/aws/*.tfstate
+deploy/aws/*.tfstate.*
+deploy/aws/.terraform.lock.hcl
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: apexpulse-postgres
+    environment:
+      POSTGRES_USER: apexpulse
+      POSTGRES_PASSWORD: apexpulse_dev_password
+      POSTGRES_DB: sports_coaching
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apexpulse -d sports_coaching"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: apexpulse-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://apexpulse:apexpulse_dev_password@postgres:5432/sports_coaching
+      MODEL_DIR: /models
+      DATASET_PATH: /dataset/preprocessed_workout_dataset.csv
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production-32bytes}
+      SENSOR_API_KEY: ${SENSOR_API_KEY:-change-me-sensor-key}
+      CORS_ORIGINS: http://localhost:3000,http://localhost:5173
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount existing trained model & dataset READ-ONLY
+      - D:/V3/trained_models:/models:ro
+      - D:/V3/preprocessed_workout_dataset.csv:/dataset/preprocessed_workout_dataset.csv:ro
+      - backend_uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: apexpulse-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:
+  backend_uploads:
