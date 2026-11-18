@@ -1,8 +1,8 @@
-"""
+r"""
 One-command deployment script for Hugging Face Spaces (Free 16 GB RAM Docker tier).
 
 Usage (PowerShell):
-    $env:HF_TOKEN = "hf_YOUR_WRITE_TOKEN_FROM_HUGGINGFACE"
+    $env:HF_TOKEN = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     cd D:\sports-coaching-system\backend
     .\.venv\Scripts\python.exe ..\deploy\huggingface\deploy-hf-space.py
 """
@@ -22,7 +22,14 @@ MODEL_BIN_PATH = Path(r"D:\V3\trained_models\calorie_prediction_model.pkl")
 
 
 def main() -> None:
-    token = os.getenv("HF_TOKEN")
+    token = (os.getenv("HF_TOKEN") or "").strip()
+    if not token or token == "hf_YOUR_WRITE_TOKEN" or not token.startswith("hf_"):
+        print("\n[!] Please set your REAL Hugging Face Write token first:")
+        print("    1. Sign in at https://huggingface.co/settings/tokens")
+        print("    2. Click '+ Create new token' -> select 'Write' -> copy the token (starts with hf_...)")
+        print('    3. Run: $env:HF_TOKEN = "hf_paste_your_real_token_here"')
+        print(r"    4. Re-run: .\.venv\Scripts\python.exe ..\deploy\huggingface\deploy-hf-space.py")
+        raise SystemExit(1)
     api = HfApi(token=token)
     me = api.whoami()
     username = me["name"]

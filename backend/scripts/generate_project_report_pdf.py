@@ -389,6 +389,36 @@ def build_pdf():
             body_style,
         )
     )
+    story.append(Spacer(1, 8))
+
+    # Step-by-Step Always-On Free Deployment Guide
+    story.append(Paragraph("Step-by-Step Guide: Free Always-On Hugging Face (16 GB RAM) + GitHub Pages", h1_style))
+    hf_steps_tbl = Table(
+        [
+            [Paragraph("<b>Step</b>", cell_bold), Paragraph("<b>Action</b>", cell_bold)],
+            [Paragraph("Step 1", cell_bold), Paragraph("Sign up or sign in for free at https://huggingface.co/join.", cell_style)],
+            [Paragraph("Step 2", cell_bold), Paragraph("Open https://huggingface.co/settings/tokens → click '+ Create new token' → choose Token type: Write → name it 'sports-ai' → click 'Create token' and copy the real token starting with hf_... (keep private).", cell_style)],
+            [Paragraph("Step 3", cell_bold), Paragraph("In PowerShell run:<br/>cd D:\\sports-coaching-system\\backend<br/>$env:HF_TOKEN = \"hf_PASTE_YOUR_REAL_TOKEN\"<br/>.&bsol;.venv\\Scripts\\python.exe ..\\deploy\\huggingface\\deploy-hf-space.py".replace("&bsol;", "\\"), cell_style)],
+            [Paragraph("Step 4", cell_bold), Paragraph("Wait ~3–5 minutes for the Docker Space (https://huggingface.co/spaces/&lt;username&gt;/sports-ai-api) to show green 'Running' status with your 2.93 GB ExtraTrees model and Companion AI loaded.", cell_style)],
+            [Paragraph("Step 5", cell_bold), Paragraph("Copy your permanent Space URL (https://&lt;username&gt;-sports-ai-api.hf.space) into GitHub Repo Settings → Secrets and variables → Actions → Variables → VITE_API_BASE_URL, and set Settings → Pages → Source to GitHub Actions (or paste it into the in-app Backend Server URL box on https://pcilambarithi-art.github.io/sports-ai/).", cell_style)],
+        ],
+        colWidths=[22 * mm, 152 * mm],
+    )
+    hf_steps_tbl.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), LIGHT_BG),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, ROW_ALT]),
+                ("GRID", (0, 0), (-1, -1), 0.55, BORDER_COLOR),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("TOPPADDING", (0, 0), (-1, -1), 4.5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4.5),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+            ]
+        )
+    )
+    story.append(KeepTogether([hf_steps_tbl]))
 
     doc.build(story, onFirstPage=_header_footer, onLaterPages=_header_footer)
     print(f"PDF generated successfully: {OUTPUT_PDF} ({OUTPUT_PDF.stat().st_size:,} bytes)")
